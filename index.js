@@ -3,6 +3,7 @@ const logo = require("asciiart-logo");
 const db = require("./db");
 require("console.table");
 const mysql = require("mysql");
+const inquirer = require("inquirer");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -50,6 +51,10 @@ async function loadMainPrompts() {
           value: "VIEW_DEPARTMENTS"
         },
         {
+          name: "Add Department",
+          value: "ADD_DEPARTMENT"
+        },
+        {
           name: "View All Employees By Department",
           value: "VIEW_EMPLOYEES_BY_DEPARTMENT"
         },
@@ -81,11 +86,7 @@ async function loadMainPrompts() {
           name: "Remove Role",
           value: "REMOVE_ROLE"
         },
-      
-        {
-          name: "Add Department",
-          value: "ADD_DEPARTMENT"
-        },
+  
         {
           name: "Remove Department",
           value: "REMOVE_DEPARTMENT"
@@ -380,20 +381,49 @@ async function removeRole() {
   loadMainPrompts();
 }
 
-async function addDepartment() {
-  const department = await prompt([
+function addDepartment() {
+ inquirer.prompt([
     {
       name: "name",
       message: "What is the name of the department?"
     }
-  ]);
-
-  await db.createDepartment(department);
-
-  console.log(`Added ${department.name} to the database`);
-
-  loadMainPrompts();
+  ]).then(function(res){
+     connection.query("INSERT INTO department(name)VALUES(?)", res.name,
+    function (err, result) { 
+    if (err) throw err;
+    console.log("\n");
+    console.table("Department created",result);
+    loadMainPrompts();
+  })
+  })
 }
+
+function addRole() {
+  inquirer.prompt([
+     {
+       name: "title",
+       message: "What is the name of the Title?"
+     },
+     {
+      name: "salary",
+      message: "What is the Salary?"
+    },
+    {
+      name: "department",
+      message: "What is the department ID?",
+      type:"list",
+      choices:[1,2,3,4]
+    }
+   ]).then(function(res){
+      connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?);", [res.title,res.salary,res.department],
+     function (err, result) { 
+     if (err) throw err;
+     console.log("\n");
+     console.table("Role created.",result);
+     loadMainPrompts();
+   })
+   })
+ }
 
 async function removeDepartment() {
   const departments = await db.findAllDepartments();
