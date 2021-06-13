@@ -42,6 +42,14 @@ async function loadMainPrompts() {
           value: "VIEW_EMPLOYEES"
         },
         {
+          name: "View All Roles",
+          value: "VIEW_ROLES"
+        },
+        {
+          name: "View All Departments",
+          value: "VIEW_DEPARTMENTS"
+        },
+        {
           name: "View All Employees By Department",
           value: "VIEW_EMPLOYEES_BY_DEPARTMENT"
         },
@@ -66,10 +74,6 @@ async function loadMainPrompts() {
           value: "UPDATE_EMPLOYEE_MANAGER"
         },
         {
-          name: "View All Roles",
-          value: "VIEW_ROLES"
-        },
-        {
           name: "Add Role",
           value: "ADD_ROLE"
         },
@@ -77,10 +81,7 @@ async function loadMainPrompts() {
           name: "Remove Role",
           value: "REMOVE_ROLE"
         },
-        {
-          name: "View All Departments",
-          value: "VIEW_DEPARTMENTS"
-        },
+      
         {
           name: "Add Department",
           value: "ADD_DEPARTMENT"
@@ -146,6 +147,16 @@ function viewDepartments() {
     if (err) throwerr;
     console.log("\n");
     console.table(employees);
+    loadMainPrompts();
+  })
+}
+
+function viewRoles() {
+  // const employees = await db.findAllEmployees();
+  connection.query("SELECT * FROM ROLE;", function (err, roles) { 
+    if (err) throwerr;
+    console.log("\n");
+    console.table(roles);
     loadMainPrompts();
   })
 }
@@ -311,14 +322,6 @@ async function updateEmployeeManager() {
   loadMainPrompts();
 }
 
-async function viewRoles() {
-  const roles = await db.findAllRoles();
-
-  console.log("\n");
-  console.table(roles);
-
-  loadMainPrompts();
-}
 
 async function addRole() {
   const departments = await db.findAllDepartments();
