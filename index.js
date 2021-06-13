@@ -130,13 +130,22 @@ async function loadMainPrompts() {
   }
 }
 
+function viewDepartments() {
+  // const employees = await db.findAllEmployees();
+  connection.query("SELECT * FROM DEPARTMENT;", function (err, department) { 
+    if (err) throwerr;
+    console.log("\n");
+    console.table(department);
+    loadMainPrompts();
+  })
+}
+
  function viewEmployees() {
   // const employees = await db.findAllEmployees();
   connection.query("select * from employee;", function (err, employees) { 
     if (err) throwerr;
     console.log("\n");
     console.table(employees);
-    console.log(employees)
     loadMainPrompts();
   })
 }
@@ -364,15 +373,6 @@ async function removeRole() {
   await db.removeRole(roleId);
 
   console.log("Removed role from the database");
-
-  loadMainPrompts();
-}
-
-async function viewDepartments() {
-  const departments = await db.findAllDepartments();
-
-  console.log("\n");
-  console.table(departments);
 
   loadMainPrompts();
 }
