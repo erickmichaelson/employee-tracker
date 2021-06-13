@@ -1,7 +1,17 @@
 const { prompt } = require("inquirer");
 const logo = require("asciiart-logo");
 const db = require("./db");
-const cTable = require("console.table");
+require("console.table");
+const mysql = require("mysql");
+
+const connection = mysql.createConnection({
+  host: "localhost",
+  // Your username
+  user: "root",
+  // Your password
+  password: "pickle313",
+  database: "employeesdb"
+});
 
 init();
 
@@ -11,8 +21,14 @@ function init() {
 
   console.log(logoText);
 
-  loadMainPrompts();
-}
+  connection.connect(function (err) {
+    if (err) throw err;
+    console.log("DB connected");
+    loadMainPrompts();
+  })
+};
+
+
 
 async function loadMainPrompts() {
   const { choice } = await prompt([
@@ -114,14 +130,17 @@ async function loadMainPrompts() {
   }
 }
 
-async function viewEmployees() {
-  const employees = await db.findAllEmployees();
-
-  console.log("\n");
-  console.table(employees);
-
-  loadMainPrompts();
+ function viewEmployees() {
+  // const employees = await db.findAllEmployees();
+  connection.query("select * from employee;", function (err, employees) { 
+    if (err) throwerr;
+    console.log("\n");
+    console.table(employees);
+    console.log(employees)
+    loadMainPrompts();
+  })
 }
+
 
 async function viewEmployeesByDepartment() {
   const departments = await db.findAllDepartments();
